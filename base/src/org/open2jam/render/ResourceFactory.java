@@ -1,5 +1,7 @@
 package org.open2jam.render;
 
+import org.open2jam.render.jogl.JoglGameWindow;
+import org.open2jam.render.jogl.JoglSprite;
 import org.open2jam.render.lwjgl.LWJGLGameWindow;
 import org.open2jam.render.lwjgl.LWJGLSprite;
 
@@ -26,9 +28,10 @@ public class ResourceFactory {
 
 	/** A value to indicate that we should use OpenGL (LWJGL) to render our game */
 	public static final int OPENGL_LWJGL = 1;
+        public static final int OPENGL_JOGL = 2;
 
 	/** The type of rendering that we are currently using */
-	private int renderingType = OPENGL_LWJGL;
+	private int renderingType = OPENGL_JOGL;
 	/** The window the game should use to render */
 	private GameWindow window;
 
@@ -47,7 +50,8 @@ public class ResourceFactory {
 	 */
 	public void setRenderingType(int renderingType) {
 		// If the rendering type is unrecognised tell the caller
-		if (renderingType != OPENGL_LWJGL) {
+		if (renderingType != OPENGL_LWJGL &&
+                       renderingType != OPENGL_JOGL) {
 			// Note, we could create our own exception to be thrown here but it
 			// seems a little bit over the top for a simple message. In general
 			// RuntimeException should be subclassed and thrown, not thrown directly.
@@ -78,6 +82,11 @@ public class ResourceFactory {
 					window = new LWJGLGameWindow();
 					break;
 				}
+                                case OPENGL_JOGL:
+				{
+					window = new JoglGameWindow();
+					break;
+				}
 			}
 		}
 		return window;
@@ -98,6 +107,10 @@ public class ResourceFactory {
 			case OPENGL_LWJGL:
 			{
 				return new LWJGLSprite((LWJGLGameWindow) window,ref);
+			}
+                        case OPENGL_JOGL:
+			{
+				return new JoglSprite((JoglGameWindow) window,ref);
 			}
 		}
 		throw new RuntimeException("Unknown rendering type: "+renderingType);

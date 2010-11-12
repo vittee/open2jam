@@ -1,6 +1,5 @@
-package org.open2jam.render.lwjgl;
+package org.open2jam.render.jogl;
 
-import org.open2jam.render.lwjgl.*;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.color.ColorSpace;
@@ -19,7 +18,7 @@ import java.net.URL;
 import java.util.Properties;
 import javax.imageio.ImageIO;
 
-import org.lwjgl.opengl.GL11;
+import javax.media.opengl.GL2;
 
 /**
  * A utility class to load textures for JOGL. This source is based
@@ -44,13 +43,15 @@ public class TextureLoader {
     
     /** The colour model for the GL image */
     private ColorModel glColorModel;
+    private final GL2 gl;
     
     /** 
      * Create a new texture loader based on the game panel
      *
      * @param gl The GL content in which the textures should be loaded
      */
-    public TextureLoader() {
+    public TextureLoader(GL2 gl) {
+        this.gl = gl;
         glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
                                             new int[] {8,8,8,8},
                                             true,
@@ -74,7 +75,7 @@ public class TextureLoader {
     private int createTextureID() 
     { 
        IntBuffer tmp = createIntBuffer(1); 
-       GL11.glGenTextures(tmp); 
+       gl.glGenTextures(1, tmp);
        return tmp.get(0);
     }
     
@@ -91,10 +92,10 @@ public class TextureLoader {
         if (tex != null)return tex;
         
         tex = createTexture(resource,
-                         GL11.GL_TEXTURE_2D, // target
-                         GL11.GL_RGBA,     // dst pixel format
-                         GL11.GL_LINEAR, // min filter (unused)
-                         GL11.GL_LINEAR);
+                         GL2.GL_TEXTURE_2D, // target
+                         GL2.GL_RGBA,     // dst pixel format
+                         GL2.GL_LINEAR, // min filter (unused)
+                         GL2.GL_LINEAR);
         
         table.put(resource,tex);
         
@@ -131,33 +132,33 @@ public class TextureLoader {
         Texture texture = new Texture(target,textureID, texw, texh); 
         
         // bind this texture 
-        GL11.glBindTexture(target, textureID);
+        gl.glBindTexture(target, textureID);
 
 
         if (image.getColorModel().hasAlpha()) {
-            srcPixelFormat = GL11.GL_RGBA;
+            srcPixelFormat = GL2.GL_RGBA;
         } else {
-            srcPixelFormat = GL11.GL_RGB;
+            srcPixelFormat = GL2.GL_RGB;
         }
 
         // convert that image into a byte buffer of texture data 
         ByteBuffer textureBuffer = convertImageData(image);
         
-        if (target == GL11.GL_TEXTURE_2D)
+        if (target == GL2.GL_TEXTURE_2D)
         {
-            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter); 
-            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter); 
+            gl.glTexParameteri(target, GL2.GL_TEXTURE_MIN_FILTER, minFilter);
+            gl.glTexParameteri(target, GL2.GL_TEXTURE_MAG_FILTER, magFilter);
         }
  
         // produce a texture from the byte buffer
-        GL11.glTexImage2D(target, 
+        gl.glTexImage2D(target,
                       0, 
                       dstPixelFormat, 
                       texw, 
                       texh,
                       0, 
                       srcPixelFormat, 
-                      GL11.GL_UNSIGNED_BYTE, 
+                      GL2.GL_UNSIGNED_BYTE,
                       textureBuffer ); 
         
         return texture; 

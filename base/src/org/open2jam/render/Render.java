@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.lwjgl.openal.OpenALException;
-import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.parser.Event.Channel;
 
 import org.open2jam.parser.ResourcesHandler;
@@ -101,7 +99,7 @@ public class Render implements GameWindowCallback
     private long lastFpsTime = 0;
 
     static{
-        ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
+        ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_JOGL);
     }
 
     public Render(Chart c, int rank, double hispeed)
@@ -112,8 +110,8 @@ public class Render implements GameWindowCallback
         window = ResourceFactory.get().getGameWindow();
     }
         
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception{
-        window.setDisplay(dm,vsync,fs);
+    public void setDisplay(int width, int height, boolean vsync, boolean fs) throws Exception{
+        window.setDisplay(width, height,vsync,fs);
     }
 
     public void startRendering(){
@@ -169,7 +167,7 @@ public class Render implements GameWindowCallback
 
         try{
         for(int i=0;i<MAX_SOURCES;i++)source_queue.push(SoundManager.newSource()); // creates 32 sources
-        }catch(OpenALException e){Util.warn("Couldn't create enough sources("+MAX_SOURCES+")");}
+        }catch(Exception e){Util.warn("Couldn't create enough sources("+MAX_SOURCES+")");}
 
         // get the chart sound samples
         samples = chart.getSamples(rank);

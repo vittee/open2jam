@@ -76,12 +76,12 @@ public class LWJGLGameWindow implements GameWindow {
 	 * @param x The width of the game display area
 	 * @param y The height of the game display area
 	 */
-	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception{
-            Display.setDisplayMode(dm);
+	public void setDisplay(int width, int height, boolean vsync, boolean fs) throws Exception{
+            Display.setDisplayMode(new DisplayMode(width, height));
             Display.setVSyncEnabled(vsync);
             Display.setFullscreen(fs);
-            width = dm.getWidth();
-            height = dm.getHeight();
+            this.width = width;
+            this.height = height;
         }
 
 	public int getResolutionHeight(){ return height; }
@@ -186,4 +186,5 @@ public class LWJGLGameWindow implements GameWindow {
     public void destroy() {
         gameRunning = false;
     }
+
 }
