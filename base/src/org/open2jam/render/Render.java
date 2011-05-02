@@ -387,7 +387,7 @@ public abstract class Render implements GameWindowCallback
         visibility_entity = new CompositeEntity();
         if(visibilityModifier != 0) visibility(visibilityModifier);
 
-        judgment_line = (Entity) skin.getEntityMap().get("JUDGMENT_LINE");
+        judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
 
         for(Event.Channel c : keyboard_map.keySet())
@@ -559,19 +559,22 @@ public abstract class Render implements GameWindowCallback
     {
         double timeNow;
         double gapTo;
-        double savedTimeLate;
 
         gapTo = 1000.0 / fps + timeThen;
         timeNow = SystemTimer.getTime();
-        savedTimeLate = timeLate;
+
+        long delta = (long) (gapTo - (timeNow + timeLate));
 
         try {
-            while ( gapTo > timeNow + savedTimeLate ) {
-                Thread.sleep(1);
-                timeNow = SystemTimer.getTime();
-            }
-        } catch (InterruptedException e) {
+            if(delta>0)Thread.sleep(delta);
+            //while ( gapTo > timeNow + savedTimeLate ) {
+            //    Thread.sleep(1);
+            //    timeNow = SystemTimer.getTime();
+            //}
+        } catch (InterruptedException ignored) {
             //Thread.currentThread().interrupt();
+        } finally {
+            timeNow = SystemTimer.getTime();
         }
 
         if ( gapTo < timeNow )
@@ -840,7 +843,6 @@ public abstract class Render implements GameWindowCallback
         if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
         entities_matrix.add(visibility_entity);
-        return;
     }
 
     /**

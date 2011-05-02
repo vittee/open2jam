@@ -16,7 +16,7 @@ public class SkinChecker extends DefaultHandler
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
-        Resources, skin, spriteset, styles, style, sprite, frame, layer, entity;
+        Resources, skin, spriteset, styles, style, sprite, frame, layer, entity
     }
     
     String[] ids = {

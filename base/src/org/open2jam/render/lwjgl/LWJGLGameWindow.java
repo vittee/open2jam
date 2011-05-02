@@ -169,8 +169,9 @@ public class LWJGLGameWindow implements GameWindow {
             }
             @Override
             public void run() {
-                while(active){
-                    while(Keyboard.next()){
+                while(active) {
+                    Keyboard.poll();
+                    while(Keyboard.next()) {
                         target_thread.interrupt();
                         yield();
                     }

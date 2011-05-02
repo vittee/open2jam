@@ -76,13 +76,10 @@ public class CompositeEntity extends Entity
      */
     @Override
     public boolean isAlive(){
-        Iterator<Entity> i = entity_list.iterator();
-        while(i.hasNext()){
-            Entity e = i.next();
-            if(!e.isAlive()) return false;
+        for (Entity e : entity_list) {
+            if (!e.isAlive()) return false;
         }
         return true;
-
     }
 
 
