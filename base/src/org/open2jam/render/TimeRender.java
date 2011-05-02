@@ -385,6 +385,7 @@ public class TimeRender extends Render
 
     private void check_keyboard(double now)
     {
+        sync(60);
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();

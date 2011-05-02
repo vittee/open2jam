@@ -50,6 +50,8 @@ public class LWJGLGameWindow implements GameWindow {
     private float scale_x = 1f, scale_y = 1f;
         private float scale_x2 = 1f, scale_y2 = 1f;
 
+        private KeyboardThread keyboard_thread = null;
+
 	/**
 	 * Create a new game window that will use OpenGL to 
 	 * render our game.
@@ -153,8 +155,29 @@ public class LWJGLGameWindow implements GameWindow {
 
             callback.initialise();
 
+            keyboard_thread = new KeyboardThread(Thread.currentThread());
+            keyboard_thread.start();
+
             gameLoop();
 	}
+
+        private class KeyboardThread extends Thread {
+            final Thread target_thread;
+            boolean active = true;
+            KeyboardThread(Thread t) {
+                target_thread = t;
+            }
+            @Override
+            public void run() {
+                while(active){
+                    while(Keyboard.next()){
+                        target_thread.interrupt();
+                        yield();
+                    }
+                }
+            }
+            public void deactivate(){ active = false; }
+        }
 
         public void update(){
             Display.update();
@@ -224,6 +247,7 @@ public class LWJGLGameWindow implements GameWindow {
                             destroy();
                     }
             }
+            keyboard_thread.deactivate();
             Display.destroy();
 	}
 

@@ -553,6 +553,35 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
+    private double timeThen = 0;
+    private double timeLate = 0;
+    void sync(int fps)
+    {
+        double timeNow;
+        double gapTo;
+        double savedTimeLate;
+
+        gapTo = 1000.0 / fps + timeThen;
+        timeNow = SystemTimer.getTime();
+        savedTimeLate = timeLate;
+
+        try {
+            while ( gapTo > timeNow + savedTimeLate ) {
+                Thread.sleep(1);
+                timeNow = SystemTimer.getTime();
+            }
+        } catch (InterruptedException e) {
+            //Thread.currentThread().interrupt();
+        }
+
+        if ( gapTo < timeNow )
+            timeLate = timeNow - gapTo;
+        else
+            timeLate = 0;
+
+        timeThen = timeNow;
+    }
+
     private final IntervalTree<Double,Double> velocity_tree;
     /**
      * given a time segment, returns the distance, in pixels,
